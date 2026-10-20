@@ -291,7 +291,7 @@ table.tb td{line-height:33px;border-bottom:1px solid var(--rule);padding:0 8px 0
 .dlg .say .eye{margin-left:6px}
 
 .ty{font-size:10px;font-weight:700;border-radius:6px;padding:1px 7px;background:var(--mc);color:#fff;line-height:1.5}
-.fcard{height:206px}.ill svg{width:66px;height:66px;display:block;margin:6px 0 2px}.fcard .fw{font-size:23px}.page.cover{background-color:#1b4fd1}.label h1{color:#1b4fd1}.page.cover .toc button{background:rgba(255,255,255,.18)}
+.fcard{height:216px}.ill.photo{width:100%;height:96px;margin:2px 0 4px;border-radius:8px;overflow:hidden;background:var(--rule)}.ill.photo img{width:100%;height:100%;object-fit:cover;display:block}.ill svg{width:66px;height:66px;display:block;margin:6px 0 2px}.fcard .fw{font-size:23px}.page.cover{background-color:#1b4fd1}.label h1{color:#1b4fd1}.page.cover .toc button{background:rgba(255,255,255,.18)}
 </style></head><body><div class="wrap">
   <nav class="tabs" id="tabs" aria-label="Các phần của vở"></nav>
   <main class="book" id="book">
@@ -388,10 +388,17 @@ const MODS=[{tab:'Bìa',color:'--c5'},{tab:'1 · Từ vựng',color:'--c1'},{tab
 const C={foot:'English for Communication • Food & Beverage',kick:'ENGLISH FOR COMMUNICATION • FOOD & BEVERAGE',title:'Food &amp; Drinks',lvl:'Countable &amp; Uncountable Nouns &amp; Containers • CEFR A2 – B1',
  facts:[['Từ vựng','20 từ khóa đồ ăn &amp; thức uống'],['Cấu trúc','S + V + [Container + OF + Noun]'],['Cấp độ','A2 – B1']],
  how:[['🔊','Bấm biểu tượng loa để nghe phát âm (giọng Google US English nếu trình duyệt có).'],['👁','Bấm “Đáp án” để hiện đáp án — chưa bấm thì đáp án luôn ẩn.'],['🖍','Dùng bút dạ, gạch chân và ghi chú dán ở khay công cụ phía dưới.'],]};
+const WP=["Apple","Sandwich","Hamburger","Egg_as_food","Vegetable","Dish_(food)","Drink","Snack","Dessert","Drinking_water","Coffee","Tea","Milk","Juice","Bread","Rice","Soup","Beef","Cheese","Olive_oil"];
+function loadPhotos(){$$('.ill').forEach((el,i)=>{
+ fetch('https://en.wikipedia.org/api/rest_v1/page/summary/'+encodeURIComponent(WP[i])).then(r=>r.ok?r.json():null).then(j=>{
+  const u=j&&j.thumbnail&&j.thumbnail.source;if(!u)return;
+  const im=new Image();im.alt=V[i][0];im.title='Ảnh: Wikipedia – '+(j.title||WP[i]);im.referrerPolicy='no-referrer';
+  im.onload=()=>{el.innerHTML='';el.classList.add('photo');el.appendChild(im)};im.src=u}).catch(()=>{})})}
+addEventListener('load',()=>{try{loadPhotos()}catch(e){}});
 const npH=s=>esc(s).replace(/\[\[(.+?)\]\]/g,'<span class="np">$1</span>');
 const PG=[null,
  {k:'Phần 1 • Vocabulary',t:'20 từ khóa đồ ăn &amp; thức uống',s:'Thẻ lật + phát âm',i:'Chạm vào thẻ để lật. C = đếm được, U = không đếm được. Bấm loa để nghe.',acts:'',
-  b:()=>`<div class="fgrid nomark">${V.map((v,i)=>`<div class="fcard"><div class="fin"><div class="ff"><span class="fn">${i+1}</span><span class="ty" style="position:absolute;top:6px;right:8px">${v[2]}</span><div class="ill">${IMG[i]}</div><div class="fw">${v[0]}</div><div class="fp">${v[1]}</div>${say(v[0])}</div><div class="fbk"><div class="fv">${v[3]}</div><div class="fx">${esc(v[4])}</div>${say(v[4].split(' / ')[0])}</div></div></div>`).join('')}</div>`},
+  b:()=>`<div class="fgrid nomark">${V.map((v,i)=>`<div class="fcard"><div class="fin"><div class="ff"><span class="fn">${i+1}</span><span class="ty" style="position:absolute;top:6px;right:8px">${v[2]}</span><div class="ill">${IMG[i]}</div><div class="fw">${v[0]}</div><div class="fp">${v[1]}</div>${say(v[0])}</div><div class="fbk"><div class="fv">${v[3]}</div><div class="fx">${esc(v[4])}</div>${say(v[4].split(' / ')[0])}</div></div></div>`).join('')}`},
  {k:'Phần 2 • Grammar Focus',t:'Đếm được &amp; không đếm được',s:'Đồ chứa + OF + Noun',i:'Chạm vào ví dụ hoặc biểu tượng loa để nghe phát âm.',acts:'',
   b:()=>`${sec('Countable nouns — danh từ đếm được','Đếm trực tiếp bằng số; số ít đi với a / an, số nhiều thêm -s / -es.')}<p class="passage">${chips('an apple|three apples|a sandwich|two sandwiches')}</p>
   ${sec('Uncountable nouns — danh từ không đếm được','Chất lỏng, khí, hạt mịn, khối thức ăn đặc. Không dùng a/an và không thêm -s.')}<p class="passage">✗ <span class="mk wv ink-red">a water, a bread</span> &nbsp; ✓ ${chips('a glass of water|a loaf of bread')}</p>
